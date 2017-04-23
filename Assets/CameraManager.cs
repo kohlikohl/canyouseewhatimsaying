@@ -1,4 +1,4 @@
-﻿
+
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -16,11 +16,13 @@ public class CameraManager : MonoBehaviour
     public const string EmotionsApiKey = "ab06c57a4a504abeb597cdc96ad67e38";
     public const string EmotionsApiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
 
+
     //public Text dictationResult;
 
     public static List<Face> CurrentFrameFaces;
 
     PhotoCapture photoCaptureObject = null;
+    Resolution cameraResolution;
     bool photoModeStarted = false;
     DateTime lastEmotionsDataFetch;
     
@@ -82,7 +84,7 @@ public class CameraManager : MonoBehaviour
     {
         if (result.success)
         {
-            Resolution cameraResolution = PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
+            cameraResolution = PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
             Texture2D targetTexture = new Texture2D(cameraResolution.width, cameraResolution.height);
             photoCaptureFrame.UploadImageDataToTexture(targetTexture);
 
@@ -111,6 +113,15 @@ public class CameraManager : MonoBehaviour
             {
                 CameraManager.CurrentFrameFaces =
                     JsonConvert.DeserializeObject<List<Face>>(www.text);
+
+                if (CameraManager.CurrentFrameFaces != null && CameraManager.CurrentFrameFaces.Count > 0)
+                {
+                    var face = CameraManager.CurrentFrameFaces[0];
+                    var faceScreenPosition = new Vector3(face.Rectangle.Left, cameraResolution.height - face.Rectangle.Top - 20.0f, 5.0f); 
+                    var faceWorldPosition = Camera.main.ScreenToWorldPoint(faceScreenPosition);
+
+                    this.gameObject.transform.position = faceWorldPosition;
+                }
             }
             catch (Exception) {}
         }

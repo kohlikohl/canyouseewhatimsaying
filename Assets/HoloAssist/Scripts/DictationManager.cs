@@ -10,6 +10,8 @@ using System;
 [RequireComponent(typeof(AudioSource))]
 public class DictationManager : MonoBehaviour,IInputClickHandler
 {
+    public Color[] EmotionColors;
+
 
     public Text dictationResult;
     public int DefaultFontSize = 14;
@@ -118,6 +120,8 @@ public class DictationManager : MonoBehaviour,IInputClickHandler
     {
         MicStream.CheckForErrorOnCall(returnCode);
     }
+
+    Image emotionImage;
     // Use this for initialization
     void Start()
     {
@@ -131,7 +135,7 @@ public class DictationManager : MonoBehaviour,IInputClickHandler
 
         sumOfValues = 0;
         countOfValues = 0;
-
+        emotionImage = GetComponentInChildren<Image>();
 
     }
 
@@ -209,6 +213,27 @@ public class DictationManager : MonoBehaviour,IInputClickHandler
         
         // 3.a: Set DictationDisplay text to be textSoFar
         dictationResult.text = textSoFar.ToString();
+
+        if (CameraManager.CurrentFrameFaces != null && CameraManager.CurrentFrameFaces.Count > 0)
+        {
+            if (CameraManager.CurrentFrameFaces[0].Scores.Anger > 0.3)
+            {
+                emotionImage.color = EmotionColors[0];
+
+            }
+            else if (CameraManager.CurrentFrameFaces[0].Scores.Sadness > 0.3)
+            {
+                emotionImage.color = EmotionColors[1];
+
+            }
+            else if (CameraManager.CurrentFrameFaces[0].Scores.Neutral > 0.3)
+            {
+                emotionImage.color = EmotionColors[2];
+
+            }
+        }
+        else
+            emotionImage.color = EmotionColors[2];
        
     }
 
@@ -224,7 +249,7 @@ public class DictationManager : MonoBehaviour,IInputClickHandler
         int fontSize;
         if (textSoFar.Length > 200) textSoFar.Length = 0;
         if (amp < 0) fontSize = 14;
-        else if (amp > 20) fontSize = 20;
+        else if (amp > 25) fontSize = 25;
         else fontSize = amp + 14;
 
         return fontSize;
