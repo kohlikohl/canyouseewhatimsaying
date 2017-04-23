@@ -129,6 +129,9 @@ public class DictationManager : MonoBehaviour,IInputClickHandler
 
         InputManager.Instance.AddGlobalListener(this.gameObject);
 
+        sumOfValues = 0;
+        countOfValues = 0;
+
 
     }
 
@@ -176,8 +179,10 @@ public class DictationManager : MonoBehaviour,IInputClickHandler
     /// <param name="text">The currently hypothesized recognition.</param>
     private void DictationRecognizer_DictationHypothesis(string text)
     {
+        int fontSize = CalculateFontSize();
+
         // We don't want to append to textSoFar yet, because the hypothesis may have changed on the next event
-        dictationResult.text = textSoFar.ToString() + " " + text + "...";
+        dictationResult.text = textSoFar.ToString() + " " + "<size=" + fontSize + ">" + text + "</size>" + "...";
 
 
     }
@@ -190,27 +195,39 @@ public class DictationManager : MonoBehaviour,IInputClickHandler
     private void DictationRecognizer_DictationResult(string text, ConfidenceLevel confidence)
     {
 
-        if (countOfValues != 0)
-            averageAmplitude = sumOfValues / countOfValues;
 
-        sumOfValues = 0;
-        countOfValues = 0;
 
         //int scaleAmplitude = (int) (averageAmplitude * (float) AmplFactor);
         //scaleAmplitude = (5 / 1000) * scaleAmplitude;
         //if (scaleAmplitude > 5) scaleAmplitude = 5;
         //int fontSize = DefaultFontSize;
         //fontSize = fontSize + (int)scaleAmplitude;
-        int fontSize = (int)averageAmplitude;
+        int fontSize = CalculateFontSize();
 
-        if (textSoFar.Length > 200) textSoFar.Length = 0;
-        if (averageAmplitude < 14) fontSize = 14;
-        if (averageAmplitude > 20) DefaultFontSize = 20;
+
         textSoFar.Append("<size=" + fontSize + ">" + text + "</size>. ");
         
         // 3.a: Set DictationDisplay text to be textSoFar
         dictationResult.text = textSoFar.ToString();
        
+    }
+
+    int CalculateFontSize()
+    {
+        if (countOfValues != 0)
+            averageAmplitude = sumOfValues / countOfValues;
+        else averageAmplitude = 0;
+        sumOfValues = 0;
+        countOfValues = 0;
+
+        int amp  = (int)averageAmplitude ;
+        int fontSize;
+        if (textSoFar.Length > 200) textSoFar.Length = 0;
+        if (amp < 0) fontSize = 14;
+        else if (amp > 20) fontSize = 20;
+        else fontSize = amp + 14;
+
+        return fontSize;
     }
 
     /// <summary>   
