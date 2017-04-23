@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 ///
 /// Basic wireframe shader that can be used for rendering spatial mapping meshes.
 ///

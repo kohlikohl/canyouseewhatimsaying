@@ -1,4 +1,6 @@
-﻿Shader "HoloToolkit/Cursor"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "HoloToolkit/Cursor"
 {
 	Properties
 	{

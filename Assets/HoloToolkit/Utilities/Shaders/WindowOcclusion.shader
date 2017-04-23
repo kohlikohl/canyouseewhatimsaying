@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 ///
 /// Simple occlusion shader that can be used to hide other objects.
 /// This prevents other objects from being rendered by drawing invisible 'opaque' pixels to the depth buffer.
